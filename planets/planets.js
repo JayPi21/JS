@@ -2,22 +2,23 @@ import bhavas from "/bhavasdata.js";
 function calculatePP(bhavas)
  {let PP = [];
  for(let i=1;i<=12;i++)
- {  let newArr,Arr=[];
+ {  let newArr,Obj={};
      newArr=bhavas.filter(element=>element.bNo==i);
-     Arr.push(newArr[0].DAL);
+     Obj[newArr[0].DAL]=true;
      if(newArr[0].DAL!=newArr[0].BHL)
-     Arr.push(newArr[0].BHL);
-     if(!Arr.includes(newArr[0].ANL))
-     Arr.push(newArr[0].ANL);
+     Obj[newArr[0].BHL]=true;
+     if(Obj[newArr[0].ANL]!=true)
+     Obj[newArr[0].ANL]=true;
      if(newArr.length>=2)
      {    for(let j=1;j<newArr.length;j++)
-          if(!Arr.includes(newArr[j].PL))
-           Arr.push(newArr[j].PL);
+          if(Obj[newArr[j].PL]!=true)
+           Obj[newArr[j].PL]=true;
       }
     
-  PP.push(Arr);
+  PP.push(Obj);
  }
 return PP;}
+//calculatePP(bhavas);
 
 
 function calculatePL(bhavas,PP)
@@ -26,12 +27,13 @@ function calculatePL(bhavas,PP)
     let arr2 = [];
     let myArr = [];
     myArr = bhavas.filter(element=>element.PL!="");
+    
     PP.forEach(element => {
      let arr3= myArr.map((element2)=>{
-         if(element.includes(element2.PL) 
-         || element.includes(element2.NL) 
-         || element.includes(element2.PSU) 
-         || element.includes(element2.SSL))  
+         if(element[element2.PL]==true
+         || element[element2.NL]==true 
+         || element[element2.PSU]==true 
+         || element[element2.SSL]==true)  
          return element2.PL;
          else return "";
 
@@ -47,7 +49,8 @@ function calculatePL(bhavas,PP)
  let PP = calculatePP(bhavas);
  let PL = calculatePL(bhavas,PP);
 
-const table = document.querySelector("table");
+
+const table = document.querySelector("#bhavas");
 
 const insertData = function (i,x,PP,PL, table) {
 	const markup = `
@@ -63,5 +66,6 @@ const insertData = function (i,x,PP,PL, table) {
 
 for(let i=1;i<=12;i++)
 {   let y=i-1;
-    insertData(i,PL[y].length,PP[y],PL[y],table);
+    let PParray = Object.keys(PP[y]);
+    insertData(i,PL[y].length,PParray,PL[y],table);
 }
